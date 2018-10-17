@@ -1,23 +1,21 @@
 %top{
 	#include <stdio.h>
-	#include "tokens.h"
+	#include "parser.tab.h"
 }
 
 %option header-file="scanner.h"
 %option outfile="scanner.c"
 %option noinput
 %option nounput
-
+%option noyywrap
 
 Letra  							[[:alpha:]]
 Digito  						[0-9]
 LetraDigito 						[[:alnum:]]
 Espacio  						[[:space:]]
-CaracterPuntuacion 					[\(\)\.\,]
-Operador 						[+|/|*|-]
-OperadorAsignacion 					"<-"
+OperadorAsignacion 					<-
 Comentario						"//".*
-Otros  							[[:punct:]]{-}["("")""."",""+""-""*""/"]
+Otros  							[[:punct:]]{-}[().,+\-*/]
 
 %%
 programa						return PROGRAMA;
@@ -27,8 +25,8 @@ codigo							return CODIGO;
 definir							return DEFINIR;
 leer							return LEER;
 escribir 						return ESCRIBIR;
-{Letra}{LetraDigito}*					return IDENTIFICADOR;
-{Digito}+						return CONSTANTE;
+{Letra}{LetraDigito}*					{yylval.cad = strdup(yytext);return IDENTIFICADOR;}
+{Digito}+						{yylval.num = atoi(yytext);return CONSTANTE;}
 "("							return '(';
 ")"							return ')';
 "."							return '.';
