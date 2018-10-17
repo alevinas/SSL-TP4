@@ -31,14 +31,14 @@ char *token_names[] = {"Fin de archivo", "Asignación","Programa","Fin","Variabl
  
 program : 		PROGRAMA bloquePrograma FIN;
 bloquePrograma : 	variables_ code;
-variables_ : 		VARIABLES | variables_ DEFINIR IDENTIFICADOR'.'{printf("definir: %s \n",$3);};
+variables_ : 		VARIABLES | variables_ DEFINIR IDENTIFICADOR'.'{printf("definir %s\n",$3);};
 code : 			CODIGO sentencia | code sentencia;
-sentencia : 		LEER '(' listaIdentificadores')' '.' | ESCRIBIR '('listaExpresiones')' '.' | IDENTIFICADOR "<-" expresion '.'; 
+sentencia : 		LEER '(' listaIdentificadores')' '.' {printf("leer\n");}| ESCRIBIR '('listaExpresiones')' '.' {printf("escribir\n");}| IDENTIFICADOR "<-" expresion '.'{printf("asignacion\n");}; 
 listaIdentificadores : 	IDENTIFICADOR | IDENTIFICADOR',' listaIdentificadores;
 listaExpresiones : 	expresion | expresion',' listaExpresiones;
-expresion : 		termino | expresion '+' termino | expresion '-' termino;
-termino : 		valor | termino '*' valor | termino '/' valor;
-valor : 		IDENTIFICADOR | CONSTANTE | '-'valor | '('expresion')'
+expresion : 		termino | expresion '+' termino {printf("suma\n");}| expresion '-' termino {printf("resta\n");};
+termino : 		valor | termino '*' valor {printf("multiplicacion\n");}| termino '/' valor {printf("division\n");};
+valor : 		IDENTIFICADOR | CONSTANTE | '-'valor {printf("inversion\n");}| '('expresion')' {printf("paréntesis\n");};
 
 %%
 
