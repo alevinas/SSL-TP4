@@ -4,7 +4,7 @@
 
 extern int yylex(void);
 void yyerror(const char *); 
-char *token_names[] = {"Fin de archivo", "Asignación","Programa","Fin","Variables","Código","Definir","Leer","Escribir", "Identificador","Constante"};
+//char *token_names[] = {"Fin de archivo", "Asignación","Programa","Fin","Variables","Código","Definir","Leer","Escribir", "Identificador","Constante"};
 %}
 
 %union{			/* Registro semántico */
@@ -27,19 +27,40 @@ char *token_names[] = {"Fin de archivo", "Asignación","Programa","Fin","Variabl
 %left  '-'  '+'
 %left  '*'  '/'
 %precedence NEG
+%nonassoc '(' ')'
 
 %%
  
-program : 		PROGRAMA bloquePrograma FIN;
-bloquePrograma : 	variables_ code;
-variables_ : 		VARIABLES | variables_ DEFINIR IDENTIFICADOR'.'{printf("definir %s\n",$3);}; 
-code : 			CODIGO sentencia | code sentencia;
-sentencia : 		LEER '(' listaIdentificadores')' '.' {printf("leer\n");}| ESCRIBIR '('listaExpresiones')' '.' {printf("escribir\n");}| IDENTIFICADOR "<-" expresion '.'{printf("asignacion\n");}; 
-listaIdentificadores : 	IDENTIFICADOR | IDENTIFICADOR',' listaIdentificadores;
-listaExpresiones : 	expresion | expresion',' listaExpresiones;
-expresion : 		termino | expresion '+' termino {printf("suma\n");}| expresion '-' termino {printf("resta\n");};
-termino : 		valor | termino '*' valor {printf("multiplicacion\n");}| termino '/' valor {printf("division\n");};
-valor : 		IDENTIFICADOR | CONSTANTE | '-'valor {printf("inversion\n");}| '('expresion')' {printf("paréntesis\n");};
+program : 		        PROGRAMA bloquePrograma FIN;
+
+bloquePrograma : 	    variables_ code;
+
+variables_ : 		    VARIABLES 
+                        | variables_ DEFINIR IDENTIFICADOR'.'{printf("definir %s\n",$3);}; 
+
+code : 			        CODIGO sentencia 
+                        | code sentencia;
+
+sentencia : 		    LEER '(' listaIdentificadores')' '.' {printf("leer\n");}
+                        | ESCRIBIR '('listaExpresiones')' '.' {printf("escribir\n");}
+                        | IDENTIFICADOR "<-" expresion '.'{printf("asignacion\n");}; 
+
+listaIdentificadores : 	IDENTIFICADOR 
+                        | IDENTIFICADOR',' listaIdentificadores;
+
+listaExpresiones : 	    expresion 
+                        | expresion',' listaExpresiones;
+
+expresion : 		    valor 
+                        | '-'valor {printf("inversion\n");}
+                        | '('expresion')' {printf("paréntesis\n");} 
+                        | expresion '+' expresion {printf("suma\n");}
+                        | expresion '-' expresion {printf("resta\n");}
+                        | expresion '*' expresion {printf("multiplicacion\n");}
+                        | expresion '/' expresion {printf("division\n");};
+
+valor : 		        IDENTIFICADOR 
+                        | CONSTANTE;
 
 %%
 

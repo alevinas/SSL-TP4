@@ -13,7 +13,7 @@ int main() {
 	}
 	printf("Compilación terminada con éxito\n");
 	// Errors sintácticos: 0 - Errores léxicos: 0
-	printf("Errores sintácticos:\t\t%d - Errores léxicos:\t\t$%d",yynerrs,errlex);
+	//printf("Errores sintácticos:\t\t%d - Errores léxicos:\t\t$%d",yynerrs,errlex);
 	return 0;
 }
 
