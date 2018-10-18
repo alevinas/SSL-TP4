@@ -1,6 +1,7 @@
 %top{
 	#include <stdio.h>
 	#include "parser.tab.h"
+	int errlex = 0;
 }
 
 %option header-file="scanner.h"
@@ -36,9 +37,9 @@ escribir 						return ESCRIBIR;
 "*"							return '*';
 "/"							return '/';
 {OperadorAsignacion}					return ASIGNACION;
-{Otros}+						printf("Error léxico: cadena desconocida: %s\n",yytext);
-{Letra}{LetraDigito}*{Otros}+({LetraDigito}|{Otros})*	printf("Error léxico: identificador inválido: %s\n",yytext);
-{Digito}+{Letra}+{LetraDigito}*				printf("Error léxico: constante inválida: %s\n",yytext);
+{Otros}+						{printf("Error léxico: cadena desconocida: %s\n",yytext);errlex++}
+{Letra}{LetraDigito}*{Otros}+({LetraDigito}|{Otros})*	{printf("Error léxico: identificador inválido: %s\n",yytext);errlex++}
+{Digito}+{Letra}+{LetraDigito}*				{printf("Error léxico: constante inválida: %s\n",yytext);errlex++}
 {Espacio}+						|
 {Comentario}						|
 .																													;
