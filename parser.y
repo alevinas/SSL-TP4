@@ -1,21 +1,24 @@
 %{
 #include <stdio.h>
 #include "scanner.h"
-
 extern int yylex(void);
 void yyerror(const char *); 
 //char *token_names[] = {"Fin de archivo", "Asignación","Programa","Fin","Variables","Código","Definir","Leer","Escribir", "Identificador","Constante"};
 %}
+
+%code provides {
+extern int errlex; 	/* Contador de Errores Léxicos */ 
+}
 
 %union{			/* Registro semántico */
 	double num;
 	char *cad;
 }
 
+
 %defines "parser.tab.h"
 %output "parser.tab.c"
 %start program /* El no terminal que es AXIOMA de la gramatica del TP2 */
-
 %define parse.error verbose /* Mas detalles cuando el Parser encuentre un error en vez de "Syntax Error" */ 
 
 %token FDT PROGRAMA FIN VARIABLES CODIGO DEFINIR LEER ESCRIBIR
@@ -31,35 +34,44 @@ void yyerror(const char *);
 
 %%
  
-program : 		        PROGRAMA bloquePrograma FIN;
+program : 		  PROGRAMA bloquePrograma FIN;
+			//| error;
 
-bloquePrograma : 	    variables_ code;
+bloquePrograma : 	  variables_ code 
+			//| error;
 
-variables_ : 		    VARIABLES 
-                        | variables_ DEFINIR IDENTIFICADOR'.'{printf("definir %s\n",$3);}; 
+variables_ : 		  VARIABLES 
+                        | variables_ DEFINIR IDENTIFICADOR'.'{printf("definir %s\n",$3);};
+			//| error; 
 
-code : 			        CODIGO sentencia 
-                        | code sentencia;
+code : 			  CODIGO sentencia 
+                        | code sentencia
+			//| error;
 
-sentencia : 		    LEER '(' listaIdentificadores')' '.' {printf("leer\n");}
+sentencia : 		  LEER '(' listaIdentificadores')' '.' {printf("leer\n");}
                         | ESCRIBIR '('listaExpresiones')' '.' {printf("escribir\n");}
-                        | IDENTIFICADOR "<-" expresion '.'{printf("asignacion\n");}; 
+                        | IDENTIFICADOR "<-" expresion '.'{printf("asignacion\n");};
+			//| error; 
 
-listaIdentificadores : 	IDENTIFICADOR 
+listaIdentificadores : 	  IDENTIFICADOR 
                         | IDENTIFICADOR',' listaIdentificadores;
+			//| error;
 
-listaExpresiones : 	    expresion 
+listaExpresiones : 	  expresion 
                         | expresion',' listaExpresiones;
+			//| error;
 
-expresion : 		    valor 
+expresion : 		  valor 
                         | '-'valor {printf("inversion\n");}
                         | '('expresion')' {printf("paréntesis\n");} 
                         | expresion '+' expresion {printf("suma\n");}
                         | expresion '-' expresion {printf("resta\n");}
                         | expresion '*' expresion {printf("multiplicacion\n");}
                         | expresion '/' expresion {printf("division\n");};
+			//| error
+			//| '(' error ')';
 
-valor : 		        IDENTIFICADOR 
+valor : 		  IDENTIFICADOR 
                         | CONSTANTE;
 
 %%
