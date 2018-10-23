@@ -38,9 +38,9 @@ escribir 						return ESCRIBIR;
 "*"							return '*';
 "/"							return '/';
 {OperadorAsignacion}					return ASIGNACION;
-{Otros}+						{printf("Error léxico: cadena desconocida %s\n",yytext);errlex++;}
-{Letra}{LetraDigito}*{Otros}+({LetraDigito}|{Otros})*	{printf("Error léxico: identificador inválido: %s\n",yytext);errlex++;}
-{Digito}+{Letra}+{LetraDigito}*				{printf("Error léxico: constante inválida: %s\n",yytext);errlex++;}
+{Otros}+						{printf("linea #%d: Error léxico: cadena desconocida %s\n",yylineno,yytext);errlex++;}
+{Letra}{LetraDigito}*{Otros}+({LetraDigito}|{Otros})*	{printf("linea #%d: Error léxico: identificador inválido: %s\n",yylineno,yytext);errlex++;}
+{Digito}+{Letra}+{LetraDigito}*				{printf("linea #%d: Error léxico: constante inválida: %s\n",yylineno,yytext);errlex++;}
 {Espacio}+						|
 {Comentario}						|
 .																													;
