@@ -34,34 +34,29 @@ extern int errlex; 	/* Contador de Errores Léxicos */
 
 %%
 
-program : 		  PROGRAMA bloquePrograma FIN;
-			//| error;
+program : 		  				PROGRAMA bloquePrograma FIN;
 
-bloquePrograma : 	  variables_ code
-			//| error;
+bloquePrograma : 	  		variables_ code;
 
-variables_ : 		  VARIABLES
+variables_ : 		  			VARIABLES
                         | variables_ DEFINIR IDENTIFICADOR'.'{printf("definir %s\n",$3);}
 												| variables_ DEFINIR error'.';
 
-code : 			  CODIGO sentencia
-                        | code sentencia
-			//| error;
+code : 			  					CODIGO sentencia
+                        | code sentencia;
 
-sentencia : 		  LEER '(' listaIdentificadores')' '.' 				{printf("leer\n");}
+sentencia : 		  			LEER '(' listaIdentificadores')' '.' 	{printf("leer\n");}
                         | ESCRIBIR '('listaExpresiones')' '.' {printf("escribir\n");}
                         | IDENTIFICADOR "<-" expresion '.'		{printf("asignacion\n");}
 												| error'.';
 
-listaIdentificadores : 	  IDENTIFICADOR
+listaIdentificadores : 	IDENTIFICADOR
                         | IDENTIFICADOR',' listaIdentificadores;
-			//| error;
 
-listaExpresiones : 	  expresion
+listaExpresiones : 	  	expresion
                         | expresion',' listaExpresiones;
-			//| error;
 
-expresion : 		  valor
+expresion : 		  			valor
                         | '-'valor 								{printf("inversion\n");}
                         | '('expresion')' 				{printf("paréntesis\n");}
                         | expresion '+' expresion {printf("suma\n");}
@@ -70,8 +65,7 @@ expresion : 		  valor
                         | expresion '/' expresion {printf("division\n");}
 												| '(' error ')';
 
-valor : 		  IDENTIFICADOR
+valor : 		  					IDENTIFICADOR
                         | CONSTANTE;
-												//| error
 
 %%
