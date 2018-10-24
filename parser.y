@@ -3,7 +3,6 @@
 #include "scanner.h"
 extern int yylex(void);
 void yyerror(const char *);
-//char *token_names[] = {"Fin de archivo", "Asignación","Programa","Fin","Variables","Código","Definir","Leer","Escribir", "Identificador","Constante"};
 %}
 
 %code provides {

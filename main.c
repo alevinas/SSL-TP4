@@ -29,7 +29,6 @@ int main() {
 	case 2:
 		puts("Memoria insuficiente"); return 2;
 	}
-	//Errors sintácticos: 0 - Errores léxicos: 0
 	return 0;
 }
 
