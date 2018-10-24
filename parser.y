@@ -34,7 +34,7 @@ extern int errlex; 	/* Contador de Errores Léxicos */
 
 %%
 
-program : 		  				PROGRAMA bloquePrograma FIN;
+program : 		  				PROGRAMA bloquePrograma FIN {if(errlex+yynerrs > 0) YYABORT;};
 
 bloquePrograma : 	  		variables_ code;
 
