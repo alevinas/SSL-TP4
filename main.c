@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
-#include "parser.tab.h"
+#include "parser.h"
 #include "scanner.h"
 extern int yynerrs;
 
@@ -33,9 +33,5 @@ int main() {
 }
 
 
-/* Informa la ocurrencia de un error. */
-void yyerror(const char *s){
-	printf("línea #%d  %s\n", yylineno, s);
-	return;
-}
+
 

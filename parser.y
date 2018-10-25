@@ -1,39 +1,31 @@
 %{
 #include <stdio.h>
 #include "scanner.h"
-extern int yylex(void);
-void yyerror(const char *);
 %}
 
 %code provides {
 extern int errlex; 	/* Contador de Errores Léxicos */
+
 }
 
-%union{			/* Registro semántico */
-	double num;
-	char *cad;
-}
+%define api.value.type{char *}
 
 
-%defines "parser.tab.h"
-%output "parser.tab.c"
+%defines "parser.h"
+%output "parser.c"
 %start program /* El no terminal que es AXIOMA de la gramatica del TP2 */
 %define parse.error verbose /* Mas detalles cuando el Parser encuentre un error en vez de "Syntax Error" */
 
-%token FDT PROGRAMA FIN VARIABLES CODIGO DEFINIR LEER ESCRIBIR
+%token PROGRAMA FIN VARIABLES CODIGO DEFINIR LEER ESCRIBIR CONSTANTE IDENTIFICADOR
 %token ASIGNACION "<-"
-%token NEG '-'
-%token <num> CONSTANTE
-%token <cad> IDENTIFICADOR
 
 %left  '-'  '+'
 %left  '*'  '/'
 %precedence NEG
-%nonassoc '(' ')'
 
 %%
 
-program : 		  				PROGRAMA bloquePrograma FIN {if(errlex+yynerrs > 0) YYABORT;};
+program : 		  				PROGRAMA bloquePrograma FIN {if (errlex+yynerrs > 0) YYABORT;else YYACCEPT;};
 
 bloquePrograma : 	  		variables_ code;
 
@@ -56,7 +48,7 @@ listaExpresiones : 	  	expresion
                         | expresion',' listaExpresiones;
 
 expresion : 		  			valor
-                        | '-'valor 								{printf("inversion\n");}
+                        | '-'valor %prec NEG								{printf("inversion\n");}
                         | '('expresion')' 				{printf("paréntesis\n");}
                         | expresion '+' expresion {printf("suma\n");}
                         | expresion '-' expresion {printf("resta\n");}
@@ -68,3 +60,9 @@ valor : 		  					IDENTIFICADOR
                         | CONSTANTE;
 
 %%
+
+/* Informa la ocurrencia de un error. */
+void yyerror(const char *s){
+        printf("línea #%d  %s\n", yylineno, s);
+        return;
+}

@@ -1,7 +1,9 @@
 %top{
 	#include <stdio.h>
-	#include "parser.tab.h"
+	#include "parser.h"
 	int errlex;
+	char bufferNuevo[200];
+	void yyerror(const char *);
 }
 
 %option header-file="scanner.h"
@@ -10,6 +12,7 @@
 %option nounput
 %option noyywrap
 %option yylineno
+
 
 Letra  							[[:alpha:]]
 Digito  						[0-9]
@@ -27,8 +30,8 @@ codigo							return CODIGO;
 definir							return DEFINIR;
 leer							return LEER;
 escribir 						return ESCRIBIR;
-{Letra}{LetraDigito}*					{yylval.cad = strdup(yytext);return IDENTIFICADOR;}
-{Digito}+						{yylval.num = atoi(yytext);return CONSTANTE;}
+{Letra}{LetraDigito}*					{yylval = strdup(yytext);return IDENTIFICADOR;}
+{Digito}+						{yylval = strdup(yytext);return CONSTANTE;}
 "("							return '(';
 ")"							return ')';
 "."							return '.';
@@ -38,9 +41,9 @@ escribir 						return ESCRIBIR;
 "*"							return '*';
 "/"							return '/';
 {OperadorAsignacion}					return ASIGNACION;
-{Otros}+						{printf("linea #%d: Error léxico: cadena desconocida %s\n",yylineno,yytext);errlex++;}
-{Letra}{LetraDigito}*{Otros}+({LetraDigito}|{Otros})*	{printf("linea #%d: Error léxico: identificador inválido: %s\n",yylineno,yytext);errlex++;}
-{Digito}+{Letra}+{LetraDigito}*				{printf("linea #%d: Error léxico: constante inválida: %s\n",yylineno,yytext);errlex++;}
+{Otros}+						{sprintf(bufferNuevo, "Error léxico: cadena desconocida: %s", yytext);yyerror(bufferNuevo);errlex++;}
+{Letra}{LetraDigito}*{Otros}+({LetraDigito}|{Otros})*	{sprintf(bufferNuevo, "Error léxico: identificador inválido: %s",yytext);yyerror(bufferNuevo);errlex++;}
+{Digito}+{Letra}+{LetraDigito}*				{sprintf(bufferNuevo, "Error léxico: constante inválida: %s",yytext);yyerror(bufferNuevo);errlex++;}
 {Espacio}+						|
 {Comentario}						|
 .																													;
